@@ -113,7 +113,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => CustomBottomNav()),
+                            builder: (context) => const LoginPage()),
                       );
                     },
                     buttonTitle: 'Get Started',

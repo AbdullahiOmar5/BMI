@@ -44,8 +44,7 @@ class _InputPageState extends State<InputPage> {
     widget.onCalculate(1, bmiResult, textResult,
         interpretation); // Pass to result page index 1
 
-    String formattedDate =
-        DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now());
+    String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
     String time = DateFormat('HH:mm').format(DateTime.now());
 
     Map<String, dynamic> bmiRecord = {

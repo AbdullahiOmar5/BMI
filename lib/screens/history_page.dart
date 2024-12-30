@@ -1068,6 +1068,8 @@ class _HistoryPageState extends State<HistoryPage> {
   List<Map<String, dynamic>> _filteredHistory =
       []; // Filtered list based on search
   bool _showAllResults = false; // State to control whether to show all results
+  DateTime? _startDate;
+  DateTime? _endDate;
   TextEditingController _searchController =
       TextEditingController(); // Controller for the search bar
 
@@ -1109,6 +1111,56 @@ class _HistoryPageState extends State<HistoryPage> {
     }
   }
 
+  // Function to pick a start date
+  void _pickStartDate() async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+
+    if (pickedDate != null) {
+      setState(() {
+        _startDate = pickedDate;
+      });
+    }
+  }
+
+// Function to pick an end date
+  void _pickEndDate() async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: _startDate ?? DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+
+    if (pickedDate != null) {
+      setState(() {
+        _endDate = pickedDate;
+      });
+    }
+  }
+
+// Function to filter history by date range
+  void _filterByDateRange() {
+    if (_startDate == null || _endDate == null) return;
+
+    setState(() {
+      _filteredHistory = _bmiHistory.where((record) {
+        final String dateString = record['date'] ?? '';
+        try {
+          DateTime recordDate = DateTime.parse(dateString);
+          return recordDate.isAfter(_startDate!.subtract(Duration(days: 1))) &&
+              recordDate.isBefore(_endDate!.add(Duration(days: 1)));
+        } catch (e) {
+          return false;
+        }
+      }).toList();
+    });
+  }
+
   // Filter BMI history based on the search input
   void _filterResults() {
     final query = _searchController.text.toLowerCase();
@@ -1143,6 +1195,75 @@ class _HistoryPageState extends State<HistoryPage> {
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
+            // Date Range Filter UI
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Start Date Picker
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: _pickStartDate,
+                      icon: Icon(Icons.calendar_today, size: 18),
+                      label: Text(
+                        _startDate != null
+                            ? "${_startDate!.toLocal()}".split(' ')[0]
+                            : "Start Date",
+                        style: TextStyle(fontSize: 12),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: kBottomContainerColour,
+                        padding: EdgeInsets.symmetric(vertical: 12),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 8), // Space between buttons
+
+                  // End Date Picker
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: _pickEndDate,
+                      icon: Icon(Icons.calendar_today, size: 18),
+                      label: Text(
+                        _endDate != null
+                            ? "${_endDate!.toLocal()}".split(' ')[0]
+                            : "End Date",
+                        style: TextStyle(fontSize: 12),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: kBottomContainerColour,
+                        padding: EdgeInsets.symmetric(vertical: 12),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 8), // Space between buttons
+
+                  // Filter Button
+                  ElevatedButton(
+                    onPressed: _filterByDateRange,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: kResultColour,
+                      padding:
+                          EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                    child: Text(
+                      "Filter",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 10),
+
             // Search Bar
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -1178,8 +1299,7 @@ class _HistoryPageState extends State<HistoryPage> {
                         final String time =
                             record['time'] ?? 'No time recorded';
                         double progress =
-                            (bmi - 18.5) / (24.9 - 18.5); // Normalize BMI
-
+                            (bmi - 10) / (35 - 10); // Normalize BMI
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10.0),
                           child: Card(

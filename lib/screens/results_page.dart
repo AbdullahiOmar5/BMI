@@ -105,14 +105,12 @@ import 'package:bmi_calculator/constants.dart';
 import '../components/bottom_button.dart';
 import '../components/custom_bottom_nav.dart';
 import '../components/reusable_card.dart';
-import 'history_page.dart';
-import '../screens/input_page.dart';
 
 class ResultPage extends StatelessWidget {
   final String bmiResult;
   final String textResult;
   final String interpretation;
-  final VoidCallback onSavePressed; // Callback to navigate to history
+  final VoidCallback onSavePressed;
 
   const ResultPage({
     super.key,
@@ -121,21 +119,27 @@ class ResultPage extends StatelessWidget {
     required this.interpretation,
     required this.onSavePressed,
   });
-  // Pass to result page index 1
-  // void _saveBMI(BuildContext context) {
-  //   Navigator.pushReplacement(
-  //       context, MaterialPageRoute(builder: (context) => const HistoryPage()));
-  // }
+
   void _saveBMI(BuildContext context) {
-    // Access the CustomBottomNav's state and update its index
     final customBottomNavState =
         context.findAncestorStateOfType<CustomBottomNavState>();
     if (customBottomNavState != null) {
-      customBottomNavState.switchToHistoryTab(); // Switch to History tab
-      // Navigator.pushReplacement(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => CustomBottomNav()),
-      // );
+      customBottomNavState.switchToHistoryTab();
+    }
+  }
+
+  String getBMIRange(String textResult) {
+    switch (textResult.toLowerCase()) {
+      case 'underweight':
+        return 'Underweight Range: Less than 18.5 kg/m²';
+      case 'normal':
+        return 'Normal Range: 18.5 - 24.9 kg/m²';
+      case 'overweight':
+        return 'Overweight Range: 25 - 29.9 kg/m²';
+      case 'obese':
+        return 'Obese Range: 30 or greater kg/m²';
+      default:
+        return 'Range: Not available';
     }
   }
 
@@ -157,7 +161,7 @@ class ResultPage extends StatelessWidget {
             ),
           ),
           Expanded(
-            flex: 5,
+            flex: 10,
             child: ReusableCard(
               onPress: () {},
               colour: kActiveCardColour,
@@ -174,11 +178,15 @@ class ResultPage extends StatelessWidget {
                     style: kBMITextStyle,
                   ),
                   Text(
+                    getBMIRange(textResult),
+                    style: kResultTextStyle,
+                  ),
+                  Text(
                     interpretation,
                     style: kBodyTextStyle,
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 0),
                 ],
               ),
             ),
@@ -186,7 +194,6 @@ class ResultPage extends StatelessWidget {
           BottomButton(
             onTap: () {
               _saveBMI(context);
-              print("object");
             },
             buttonTitle: 'Save',
           ),
@@ -195,3 +202,91 @@ class ResultPage extends StatelessWidget {
     );
   }
 }
+
+// import 'package:flutter/material.dart';
+// import 'package:bmi_calculator/constants.dart';
+// import '../components/bottom_button.dart';
+// import '../components/custom_bottom_nav.dart';
+// import '../components/reusable_card.dart';
+//
+// class ResultPage extends StatelessWidget {
+//   final String bmiResult;
+//   final String textResult;
+//   final String interpretation;
+//   final VoidCallback onSavePressed; // Callback to navigate to history
+//
+//   const ResultPage({
+//     super.key,
+//     required this.bmiResult,
+//     required this.textResult,
+//     required this.interpretation,
+//     required this.onSavePressed,
+//   });
+//   void _saveBMI(BuildContext context) {
+//     // Access the CustomBottomNav's state and update its index
+//     final customBottomNavState =
+//         context.findAncestorStateOfType<CustomBottomNavState>();
+//     if (customBottomNavState != null) {
+//       customBottomNavState.switchToHistoryTab(); // Switch to History tab
+//       // Navigator.pushReplacement(
+//       //   context,
+//       //   MaterialPageRoute(builder: (context) => CustomBottomNav()),
+//       // );
+//     }
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('BMI Result'),
+//       ),
+//       body: Column(
+//         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//         children: [
+//           Expanded(
+//             child: Center(
+//               child: Text(
+//                 'Your Result',
+//                 style: kTitleTextStyle,
+//               ),
+//             ),
+//           ),
+//           Expanded(
+//             flex: 10,
+//             child: ReusableCard(
+//               onPress: () {},
+//               colour: kActiveCardColour,
+//               cardChild: Column(
+//                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                 crossAxisAlignment: CrossAxisAlignment.center,
+//                 children: [
+//                   Text(
+//                     textResult,
+//                     style: kResultTextStyle,
+//                   ),
+//                   Text(
+//                     bmiResult,
+//                     style: kBMITextStyle,
+//                   ),
+//                   Text(
+//                     interpretation,
+//                     style: kBodyTextStyle,
+//                     textAlign: TextAlign.center,
+//                   ),
+//                   const SizedBox(height: 0),
+//                 ],
+//               ),
+//             ),
+//           ),
+//           BottomButton(
+//             onTap: () {
+//               _saveBMI(context);
+//             },
+//             buttonTitle: 'Save',
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
