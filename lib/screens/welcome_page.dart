@@ -1,10 +1,7 @@
-import 'package:bmi_calculator/components/custom_bottom_nav.dart';
-import 'package:bmi_calculator/screens/history_page.dart';
-import 'package:bmi_calculator/screens/input_page.dart';
 import 'package:flutter/material.dart';
 import 'package:bmi_calculator/constants.dart';
 import 'package:bmi_calculator/components/bottom_button.dart'; // Import reusable button
-import 'login_page.dart'; // Replace with your calculation page file
+import 'login_page.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
